@@ -53,6 +53,8 @@ namespace PokedexAPI
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UsePokemonExceptionHandler();
+
             app.UseHttpsRedirection();
 
             app.UseRouting();

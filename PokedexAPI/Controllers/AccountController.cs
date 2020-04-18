@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PokedexAPI.Models;
+using PokedexAPI.Services;
 
 namespace PokedexAPI.Controllers
 {
@@ -14,10 +15,21 @@ namespace PokedexAPI.Controllers
     [Authorize]
     public class AccountController : ControllerBase
     {
+        IUserService _userService;
+
+        public AccountController(IUserService userService)
+        {
+            _userService = userService;
+        }
+
+
+
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody]Login model)
         {
+            var user = _userService.Authenticate(model.Email, model.Password);
+
             return Ok();
         }
 

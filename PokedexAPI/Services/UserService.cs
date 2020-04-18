@@ -17,7 +17,7 @@ namespace PokedexAPI.Services
 {
     public interface IUserService
     {
-        User Authenticate(string username, string password);
+        User Authenticate(string email, string password);
         IEnumerable<User> GetAll();
         Task<User> GetByEmailAsync(string email);
         Task<User> GetByIdAsync(int id);
@@ -43,10 +43,10 @@ namespace PokedexAPI.Services
 
             // return null if user not found
             if (user == null)
-                throw new Exception("User not found");
+                throw new PokemonAPIException("User not found", ExceptionConstants.USER_NOT_FOUND);
 
             if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
-                throw new Exception("Password not valid");
+                throw new PokemonAPIException("Password not valid", ExceptionConstants.BAD_LOGIN);
 
             // authentication successful so generate jwt token
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -80,19 +80,19 @@ namespace PokedexAPI.Services
         {
             // validation
             if (string.IsNullOrWhiteSpace(user.Email))
-                throw new Exception("Email is required");
+                throw new PokemonAPIException("Email is required", ExceptionConstants.BAD_REGISTER);
 
             if (string.IsNullOrWhiteSpace(user.UserName))
-                throw new Exception("Username is required");
+                throw new PokemonAPIException("Username is required", ExceptionConstants.BAD_REGISTER);
 
             if (string.IsNullOrWhiteSpace(password))
-                throw new Exception("Password is required");
+                throw new PokemonAPIException("Password is required", ExceptionConstants.BAD_REGISTER);
 
             if (await GetByEmailAsync(user.Email) != null)
-                throw new Exception("Email \"" + user.Email + "\" is already taken");
+                throw new PokemonAPIException("Email \"" + user.Email + "\" is already taken", ExceptionConstants.BAD_REGISTER);
 
             if (_context.Users.Any(x => x.UserName == user.UserName))
-                throw new Exception("Username \"" + user.UserName + "\" is already taken");
+                throw new PokemonAPIException("Username \"" + user.UserName + "\" is already taken", ExceptionConstants.BAD_REGISTER);
 
             byte[] passwordHash, passwordSalt;
             CreatePasswordHash(password, out passwordHash, out passwordSalt);
@@ -118,14 +118,14 @@ namespace PokedexAPI.Services
             var user = _context.Users.Find(userParam.Id);
 
             if (user == null)
-                throw new Exception("User not found");
+                throw new PokemonAPIException("User not found", ExceptionConstants.USER_NOT_FOUND);
 
             // update username if it has changed
             if (!string.IsNullOrWhiteSpace(userParam.Email) && userParam.Email != user.Email)
             {
                 // throw error if the new username is already taken
                 if (await GetByEmailAsync(user.Email) != null)
-                    throw new Exception("Email \"" + user.Email + "\" is already taken");
+                    throw new PokemonAPIException("Email is required", ExceptionConstants.BAD_REGISTER);
 
                 user.Email = userParam.Email;
             }
@@ -175,7 +175,7 @@ namespace PokedexAPI.Services
         private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
             if (password == null) throw new ArgumentNullException("password");
-            if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
+            if (string.IsNullOrWhiteSpace(password)) throw new PokemonAPIException("Value cannot be empty or whitespace only string.", ExceptionConstants.BAD_LOGIN);
 
             using (var hmac = new System.Security.Cryptography.HMACSHA512())
             {
@@ -187,9 +187,7 @@ namespace PokedexAPI.Services
         private static bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
         {
             if (password == null) throw new ArgumentNullException("password");
-            if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
-            if (storedHash.Length != 64) throw new ArgumentException("Invalid length of password hash (64 bytes expected).", "passwordHash");
-            if (storedSalt.Length != 128) throw new ArgumentException("Invalid length of password salt (128 bytes expected).", "passwordHash");
+            if (string.IsNullOrWhiteSpace(password)) throw new PokemonAPIException("Value cannot be empty or whitespace only string.", ExceptionConstants.BAD_LOGIN);
 
             using (var hmac = new System.Security.Cryptography.HMACSHA512(storedSalt))
             {
