@@ -34,7 +34,11 @@ namespace PokedexAPI
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder
+                        .UseKestrel()
+                        .UseUrls("http://*:5000", "https://*:5001")
+                        .UseIISIntegration()
+                        .UseStartup<Startup>();
                 });
     }
 }

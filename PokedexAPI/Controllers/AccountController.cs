@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PokedexAPI.Extensions;
 using PokedexAPI.Models;
 using PokedexAPI.Services;
 
@@ -30,7 +31,7 @@ namespace PokedexAPI.Controllers
         {
             var user = _userService.Authenticate(model.Email, model.Password);
 
-            return Ok();
+            return Ok(user);
         }
 
         [AllowAnonymous]

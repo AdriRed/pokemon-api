@@ -11,7 +11,7 @@ namespace PokedexAPI.Extensions
         public static User WithoutPassword(this User user)
         {
             user.PasswordHash = null;
-            user.PasswordHash = null;
+            user.PasswordSalt = null;
             return user;
         }
 
