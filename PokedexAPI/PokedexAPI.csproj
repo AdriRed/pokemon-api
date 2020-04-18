@@ -20,5 +20,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="5.3.2" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+
 
 </Project>
