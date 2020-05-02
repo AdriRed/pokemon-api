@@ -21,7 +21,7 @@ namespace PokedexAPI.Services
         IEnumerable<User> GetAll();
         Task<User> GetByEmailAsync(string email);
         Task<User> GetByIdAsync(int id);
-        Task<User> CreateAsync(User user, string password);
+        Task<User> CreateAsync(User user, string password, string repeat);
         Task<User> UpdateAsync(User user, string password = null, string repeatPassword = null);
         Task<User> DeleteAsync(string email);
     }
@@ -76,7 +76,7 @@ namespace PokedexAPI.Services
             return await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
         }
 
-        public async Task<User> CreateAsync(User user, string password)
+        public async Task<User> CreateAsync(User user, string password, string repeat)
         {
             // validation
             if (string.IsNullOrWhiteSpace(user.Email))
@@ -87,6 +87,10 @@ namespace PokedexAPI.Services
 
             if (string.IsNullOrWhiteSpace(password))
                 throw new PokemonAPIException("Password is required", ExceptionConstants.BAD_REGISTER);
+
+            if (password != repeat)
+                throw new PokemonAPIException("Password and repeat should be equal", ExceptionConstants.BAD_REGISTER);
+
 
             if (await GetByEmailAsync(user.Email) != null)
                 throw new PokemonAPIException("Email \"" + user.Email + "\" is already taken", ExceptionConstants.BAD_REGISTER);

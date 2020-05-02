@@ -28,7 +28,7 @@ namespace PokedexAPI.Context
                     Email = "test@test.com",
                     UserName = "test"
                 };
-                await _userService.CreateAsync(user, "test");
+                await _userService.CreateAsync(user, "test", "test");
             }
         }
     }

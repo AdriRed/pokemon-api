@@ -42,13 +42,13 @@ namespace PokedexAPI.Controllers
             {
                 Email = model.Email,
                 UserName = model.Username
-            }, model.Password);
+            }, model.Password, model.RepeatPassword);
 
             return Ok(user.ToModel());
         }
 
         // GET: api/Account/self
-        [HttpGet("{self}")]
+        [HttpGet("self")]
         public async Task<IActionResult> Self()
         {
             var user = await _userService.GetByIdAsync(Convert.ToInt32(User.Identity.Name));
@@ -56,7 +56,7 @@ namespace PokedexAPI.Controllers
         }
 
         // GET: api/Account/edit
-        [HttpPut("{edit}")]
+        [HttpPut("edit")]
         public async Task<IActionResult> Edit([FromBody]UserModel model)
         {
             var user = await _userService.GetByIdAsync(Convert.ToInt32(User.Identity.Name));
@@ -65,7 +65,7 @@ namespace PokedexAPI.Controllers
         }
 
         // POST: api/Account/edit
-        [HttpPut("{changepassword}")]
+        [HttpPut("changepassword")]
         public async Task<IActionResult> ChangePassword([FromBody]ChangePasswordModel model)
         {
             var user = await _userService.GetByIdAsync(Convert.ToInt32(User.Identity.Name));
