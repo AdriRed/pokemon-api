@@ -17,12 +17,12 @@ namespace PokedexAPI.Services
 {
     public interface IUserService
     {
-        User Authenticate(string email, string password);
+        Task<User> AuthenticateAsync(string email, string password);
         IEnumerable<User> GetAll();
         Task<User> GetByEmailAsync(string email);
         Task<User> GetByIdAsync(int id);
         Task<User> CreateAsync(User user, string password);
-        Task<User> UpdateAsync(User user, string password = null);
+        Task<User> UpdateAsync(User user, string password = null, string repeatPassword = null);
         Task<User> DeleteAsync(string email);
     }
 
@@ -37,9 +37,9 @@ namespace PokedexAPI.Services
             _appSettings = appSettings;
         }
 
-        public User Authenticate(string email, string password)
+        public async Task<User> AuthenticateAsync(string email, string password)
         {
-            var user = _context.Users.FirstOrDefault(x => x.Email == email);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
 
             // return null if user not found
             if (user == null)
@@ -63,7 +63,7 @@ namespace PokedexAPI.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             user.Token = tokenHandler.WriteToken(token);
 
-            return user.WithoutPassword();
+            return user;
         }
 
         public IEnumerable<User> GetAll()
@@ -113,7 +113,7 @@ namespace PokedexAPI.Services
             return user;
         }
 
-        public async Task<User> UpdateAsync(User userParam, string password = null)
+        public async Task<User> UpdateAsync(User userParam, string password = null, string repeatPassword = null)
         {
             var user = _context.Users.Find(userParam.Id);
 
@@ -130,10 +130,18 @@ namespace PokedexAPI.Services
                 user.Email = userParam.Email;
             }
 
+            if (userParam.Photo != null && Enumerable.SequenceEqual(userParam.Photo, user.Photo))
+            {
+                user.Photo = userParam.Photo;
+            }
+
             // update password if provided
             if (!string.IsNullOrWhiteSpace(password))
             {
                 byte[] passwordHash, passwordSalt;
+                if (password != repeatPassword)
+                    throw new PokemonAPIException("Passwords dont match", ExceptionConstants.PASSWORDS_DONT_MATCH);
+
                 CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
                 user.PasswordHash = passwordHash;

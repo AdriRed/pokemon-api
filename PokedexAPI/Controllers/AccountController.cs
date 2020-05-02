@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Scaffolding;
 using PokedexAPI.Extensions;
 using PokedexAPI.Models;
+using PokedexAPI.Models.Extensions;
 using PokedexAPI.Services;
 
 namespace PokedexAPI.Controllers
@@ -23,55 +25,52 @@ namespace PokedexAPI.Controllers
             _userService = userService;
         }
 
-
-
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody]Login model)
         {
-            var user = _userService.Authenticate(model.Email, model.Password);
+            var user = await _userService.AuthenticateAsync(model.Email, model.Password);
 
-            return Ok(user);
+            return Ok(user.WithoutPassword());
         }
 
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody]RegisterUser model)
         {
-            return Ok();
+            var user = await _userService.CreateAsync(new Entities.User()
+            {
+                Email = model.Email,
+                UserName = model.Username
+            }, model.Password);
+
+            return Ok(user.ToModel());
         }
 
-
-        // GET: api/Account
-        [HttpGet]
-        public IEnumerable<string> Get()
+        // GET: api/Account/self
+        [HttpGet("{self}")]
+        public async Task<IActionResult> Self()
         {
-            return new string[] { "value1", "value2" };
+            var user = await _userService.GetByIdAsync(Convert.ToInt32(User.Identity.Name));
+            return Ok(user.ToModel());
         }
 
-        // GET: api/Account/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        // GET: api/Account/edit
+        [HttpPut("{edit}")]
+        public async Task<IActionResult> Edit([FromBody]UserModel model)
         {
-            return "value";
+            var user = await _userService.GetByIdAsync(Convert.ToInt32(User.Identity.Name));
+            user = await _userService.UpdateAsync(model.ToEntity());
+            return Ok(user.ToModel());
         }
 
-        // POST: api/Account
-        [HttpPost]
-        public void Post([FromBody] string value)
+        // POST: api/Account/edit
+        [HttpPut("{changepassword}")]
+        public async Task<IActionResult> ChangePassword([FromBody]ChangePasswordModel model)
         {
-        }
-
-        // PUT: api/Account/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            var user = await _userService.GetByIdAsync(Convert.ToInt32(User.Identity.Name));
+            user = await _userService.UpdateAsync(user, model.Password, model.RepeatPassword);
+            return Ok(user.ToModel());
         }
     }
 }
