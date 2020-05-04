@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace PokedexAPI.Models
 {
-    public class LoginResult
+    public class LoginResult : UserModel
     {
         public string Token { get; set; }
     }

@@ -31,7 +31,7 @@ namespace PokedexAPI.Controllers
         {
             var user = await _userService.AuthenticateAsync(model.Email, model.Password);
 
-            return Ok(user.WithoutPassword());
+            return Ok(user.ToLoginResult());
         }
 
         [AllowAnonymous]
@@ -44,7 +44,9 @@ namespace PokedexAPI.Controllers
                 UserName = model.Username
             }, model.Password, model.RepeatPassword);
 
-            return Ok(user.ToModel());
+            user = await _userService.AuthenticateAsync(model.Email, model.Password);
+
+            return Ok(user.ToLoginResult());
         }
 
         // GET: api/Account/self

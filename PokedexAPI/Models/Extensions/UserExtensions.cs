@@ -17,6 +17,17 @@ namespace PokedexAPI.Models.Extensions
             };
         }
 
+        public static LoginResult ToLoginResult(this Entities.User user)
+        {
+            return new LoginResult
+            {
+                UserName = user.UserName,
+                Email = user.Email,
+                Photo = user.Photo,
+                Token = user.Token
+            };
+        }
+
         public static Entities.User ToEntity(this UserModel user)
         {
             return new Entities.User
