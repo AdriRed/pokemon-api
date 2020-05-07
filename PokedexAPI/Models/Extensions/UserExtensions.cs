@@ -13,7 +13,7 @@ namespace PokedexAPI.Models.Extensions
             {
                 Email = user.Email,
                 Photo = user.Photo,
-                UserName = user.UserName
+                Username = user.UserName
             };
         }
 
@@ -21,7 +21,7 @@ namespace PokedexAPI.Models.Extensions
         {
             return new LoginResult
             {
-                UserName = user.UserName,
+                Username = user.UserName,
                 Email = user.Email,
                 Photo = user.Photo,
                 Token = user.Token
@@ -34,7 +34,7 @@ namespace PokedexAPI.Models.Extensions
             {
                 Email = user.Email,
                 Photo = user.Photo,
-                UserName = user.UserName
+                UserName = user.Username
             };
         }
     }

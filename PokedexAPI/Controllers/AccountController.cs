@@ -26,6 +26,8 @@ namespace PokedexAPI.Controllers
         }
 
         [AllowAnonymous]
+        [ProducesResponseType(typeof(LoginResult), 200)]
+        [ProducesResponseType(typeof(ErrorModel), 500)]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody]Login model)
         {
@@ -35,6 +37,8 @@ namespace PokedexAPI.Controllers
         }
 
         [AllowAnonymous]
+        [ProducesResponseType(typeof(LoginResult), 200)]
+        [ProducesResponseType(typeof(ErrorModel), 500)]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody]RegisterUser model)
         {
@@ -51,6 +55,8 @@ namespace PokedexAPI.Controllers
 
         // GET: api/Account/self
         [HttpGet("self")]
+        [ProducesResponseType(typeof(UserModel), 200)]
+        [ProducesResponseType(typeof(ErrorModel), 500)]
         public async Task<IActionResult> Self()
         {
             var user = await _userService.GetByIdAsync(Convert.ToInt32(User.Identity.Name));
@@ -59,6 +65,8 @@ namespace PokedexAPI.Controllers
 
         // GET: api/Account/edit
         [HttpPut("edit")]
+        [ProducesResponseType(typeof(UserModel), 200)]
+        [ProducesResponseType(typeof(ErrorModel), 500)]
         public async Task<IActionResult> Edit([FromBody]UserModel model)
         {
             var user = await _userService.GetByIdAsync(Convert.ToInt32(User.Identity.Name));
@@ -68,6 +76,8 @@ namespace PokedexAPI.Controllers
 
         // POST: api/Account/edit
         [HttpPut("changepassword")]
+        [ProducesResponseType(typeof(UserModel), 200)]
+        [ProducesResponseType(typeof(ErrorModel), 500)]
         public async Task<IActionResult> ChangePassword([FromBody]ChangePasswordModel model)
         {
             var user = await _userService.GetByIdAsync(Convert.ToInt32(User.Identity.Name));

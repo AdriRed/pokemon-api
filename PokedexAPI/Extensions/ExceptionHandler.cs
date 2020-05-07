@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using PokedexAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,10 +30,17 @@ namespace PokedexAPI.Extensions
 
                     if (exceptionHandlerPathFeature?.Error is PokemonAPIException pexc)
                     {
-                        await context.Response.WriteAsync(JsonConvert.SerializeObject(new 
+                        await context.Response.WriteAsync(JsonConvert.SerializeObject(new ErrorModel
                         { 
                             InnerCode = pexc.Code, 
                             Reason = pexc.Message
+                        }));
+                    } else
+                    {
+                        await context.Response.WriteAsync(JsonConvert.SerializeObject(new ErrorModel
+                        {
+                            InnerCode = -1,
+                            Reason = "Not controlled exception. Please contact to the admin."
                         }));
                     }
                 });
