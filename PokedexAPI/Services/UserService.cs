@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PokedexAPI.Context;
 using PokedexAPI.Entities;
@@ -7,6 +8,7 @@ using PokedexAPI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
@@ -22,8 +24,9 @@ namespace PokedexAPI.Services
         Task<User> GetByEmailAsync(string email);
         Task<User> GetByIdAsync(int id);
         Task<User> CreateAsync(User user, string password, string repeat);
-        Task<User> UpdateAsync(User user, string password = null, string repeatPassword = null);
+        Task<User> UpdateAsync(int id, User user, string password = null, string repeatPassword = null);
         Task<User> DeleteAsync(string email);
+        Task<User> SetPhotoAsync(int id, IFormFile photo);
     }
 
     public class UserService : IUserService
@@ -117,26 +120,29 @@ namespace PokedexAPI.Services
             return user;
         }
 
-        public async Task<User> UpdateAsync(User userParam, string password = null, string repeatPassword = null)
+        public async Task<User> UpdateAsync(int id, User userParam, string password = null, string repeatPassword = null)
         {
-            var user = _context.Users.Find(userParam.Id);
+            var user = _context.Users.Find(id);
 
             if (user == null)
                 throw new PokemonAPIException("User not found", ExceptionConstants.USER_NOT_FOUND);
 
             // update username if it has changed
-            if (!string.IsNullOrWhiteSpace(userParam.Email) && userParam.Email != user.Email)
+            if (userParam != null)
             {
-                // throw error if the new username is already taken
-                if (await GetByEmailAsync(user.Email) != null)
-                    throw new PokemonAPIException("Email is required", ExceptionConstants.BAD_REGISTER);
+                if (!string.IsNullOrWhiteSpace(userParam.Email) && userParam.Email != user.Email)
+                {
+                    // throw error if the new username is already taken
+                    if (await GetByEmailAsync(user.Email) != null)
+                        throw new PokemonAPIException("Email is required", ExceptionConstants.BAD_REGISTER);
 
-                user.Email = userParam.Email;
-            }
+                    user.Email = userParam.Email;
+                }
 
-            if (userParam.Photo != null && Enumerable.SequenceEqual(userParam.Photo, user.Photo))
-            {
-                user.Photo = userParam.Photo;
+                if (userParam.Photo != null && (user.Photo == null || Enumerable.SequenceEqual(userParam.Photo, user.Photo)))
+                {
+                    user.Photo = userParam.Photo;
+                }
             }
 
             // update password if provided
@@ -216,6 +222,42 @@ namespace PokedexAPI.Services
         public async Task<User> GetByIdAsync(int id)
         {
             return await _context.Users.FindAsync(id);
+        }
+
+        public async Task<User> SetPhotoAsync(int id, IFormFile photo)
+        {
+            if (photo == null) throw new PokemonAPIException("Bad request", ExceptionConstants.BAD_REQUEST);
+            var user = await GetByIdAsync(id);
+
+            byte[] buffer;
+
+            try
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    await photo.CopyToAsync(ms);
+                    buffer = ms.ToArray();
+                }
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+            
+
+            user.Photo = buffer;
+
+            _context.Users.Update(user);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return user;
         }
     }
 }
