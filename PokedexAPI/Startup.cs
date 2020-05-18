@@ -40,7 +40,8 @@ namespace PokedexAPI
             services.AddControllers();
             services.AddScoped<IUserService, UserService>();
             services.AddDbContext<PokemonApiContext>(c =>
-                c.UseSqlServer(Configuration.GetConnectionString("default"))
+                c.UseSqlServer(Configuration.GetConnectionString("default")),
+                ServiceLifetime.Transient
             );
             services.AddConfigureSwagger();
 
