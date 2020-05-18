@@ -133,10 +133,15 @@ namespace PokedexAPI.Services
                 if (!string.IsNullOrWhiteSpace(userParam.Email) && userParam.Email != user.Email)
                 {
                     // throw error if the new username is already taken
-                    if (await GetByEmailAsync(user.Email) != null)
-                        throw new PokemonAPIException("Email is required", ExceptionConstants.BAD_REGISTER);
+                    if (await GetByEmailAsync(userParam.Email) != null)
+                        throw new PokemonAPIException("Email is repeated", ExceptionConstants.BAD_REQUEST);
 
                     user.Email = userParam.Email;
+                }
+
+                if (!string.IsNullOrWhiteSpace(userParam.UserName) && userParam.UserName != user.UserName)
+                {
+                    user.UserName = userParam.UserName;
                 }
 
                 if (userParam.Photo != null && (user.Photo == null || Enumerable.SequenceEqual(userParam.Photo, user.Photo)))
