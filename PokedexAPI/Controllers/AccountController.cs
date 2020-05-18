@@ -63,14 +63,23 @@ namespace PokedexAPI.Controllers
             return Ok(user.ToModel());
         }
 
+        // PUT: api/Account/setphoto
+        [HttpPut("setphoto")]
+        [ProducesResponseType(typeof(UserModel), 200)]
+        [ProducesResponseType(typeof(ErrorModel), 500)]
+        public async Task<IActionResult> SetPhoto([FromForm]PhotoModel model)
+        {
+            var user = await _userService.SetPhotoAsync(Convert.ToInt32(User.Identity.Name), model.File);
+            return Ok(user.ToModel());
+        }
+
         // GET: api/Account/edit
         [HttpPut("edit")]
         [ProducesResponseType(typeof(UserModel), 200)]
         [ProducesResponseType(typeof(ErrorModel), 500)]
         public async Task<IActionResult> Edit([FromBody]UserModel model)
         {
-            var user = await _userService.GetByIdAsync(Convert.ToInt32(User.Identity.Name));
-            user = await _userService.UpdateAsync(model.ToEntity());
+            var user = await _userService.UpdateAsync(Convert.ToInt32(this.User.Identity.Name), model.ToEntity());
             return Ok(user.ToModel());
         }
 
@@ -80,8 +89,7 @@ namespace PokedexAPI.Controllers
         [ProducesResponseType(typeof(ErrorModel), 500)]
         public async Task<IActionResult> ChangePassword([FromBody]ChangePasswordModel model)
         {
-            var user = await _userService.GetByIdAsync(Convert.ToInt32(User.Identity.Name));
-            user = await _userService.UpdateAsync(user, model.Password, model.RepeatPassword);
+            var user = await _userService.UpdateAsync(Convert.ToInt32(User.Identity.Name), null, model.Password, model.RepeatPassword);
             return Ok(user.ToModel());
         }
     }

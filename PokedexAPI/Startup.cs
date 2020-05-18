@@ -38,9 +38,10 @@ namespace PokedexAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddScoped<IUserService, UserService>();
+            services.AddTransient<IUserService, UserService>();
             services.AddDbContext<PokemonApiContext>(c =>
                 c.UseSqlServer(Configuration.GetConnectionString("default")),
+                ServiceLifetime.Transient,
                 ServiceLifetime.Transient
             );
             services.AddConfigureSwagger();
@@ -50,7 +51,6 @@ namespace PokedexAPI
             services.AddCustomAuth(Configuration);
             services.AddScoped<PokemonApiSeeder>();
         }
-
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

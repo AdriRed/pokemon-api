@@ -35,6 +35,7 @@ namespace PokedexAPI
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
+                        .UseIIS()
                         .UseUrls("http://192.168.0.18:5000", "https://192.168.0.18:5001")
                         .UseIISIntegration()
                         .UseStartup<Startup>();

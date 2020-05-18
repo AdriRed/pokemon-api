@@ -10,7 +10,8 @@ namespace PokedexAPI
         BAD_LOGIN,
         USER_NOT_FOUND,
         BAD_REGISTER,
-        PASSWORDS_DONT_MATCH
+        PASSWORDS_DONT_MATCH,
+        BAD_REQUEST
     }
 
     public static class Literals
