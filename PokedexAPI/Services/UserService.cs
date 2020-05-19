@@ -20,7 +20,7 @@ namespace PokedexAPI.Services
     public interface IUserService
     {
         Task<User> AuthenticateAsync(string email, string password);
-        IEnumerable<User> GetAll();
+        Task<ICollection<User>> GetAllAsync();
         Task<User> GetByEmailAsync(string email);
         Task<User> GetByIdAsync(int id);
         Task<User> CreateAsync(User user, string password, string repeat);
@@ -69,9 +69,9 @@ namespace PokedexAPI.Services
             return user;
         }
 
-        public IEnumerable<User> GetAll()
+        public async Task<ICollection<User>> GetAllAsync()
         {
-            return _context.Users;
+            return await _context.Users.Select(x => x.WithoutPassword().WithoutToken()).ToListAsync();
         }
 
         public async Task<User> GetByEmailAsync(string email)

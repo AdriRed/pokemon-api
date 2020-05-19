@@ -20,5 +20,6 @@ namespace PokedexAPI.Entities
         public string Token { get; set; }
 
         public virtual ICollection<FavouritePokemon> FavouritePokemons { get; set; } = new List<FavouritePokemon>();
+        public virtual ICollection<CustomPokemon> CustomPokemons { get; set; } = new List<CustomPokemon>();
     }
 }
