@@ -39,6 +39,7 @@ namespace PokedexAPI
         {
             services.AddControllers();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IPokemonService, PokemonService>();
             services.AddDbContext<PokemonApiContext>(c =>
                 c.UseSqlServer(Configuration.GetConnectionString("default")),
                 ServiceLifetime.Transient,

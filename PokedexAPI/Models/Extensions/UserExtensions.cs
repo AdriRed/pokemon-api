@@ -11,6 +11,7 @@ namespace PokedexAPI.Models.Extensions
         {
             return new UserModel
             {
+                Id = user.Id,
                 Email = user.Email,
                 Photo = user.Photo,
                 Username = user.UserName
@@ -21,6 +22,7 @@ namespace PokedexAPI.Models.Extensions
         {
             return new LoginResult
             {
+                Id = user.Id,
                 Username = user.UserName,
                 Email = user.Email,
                 Photo = user.Photo,

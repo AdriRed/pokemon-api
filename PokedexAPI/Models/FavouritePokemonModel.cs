@@ -5,11 +5,9 @@ using System.Threading.Tasks;
 
 namespace PokedexAPI.Models
 {
-    public class UserModel
+    public class FavouritePokemonModel
     {
         public int Id { get; set; }
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public byte[] Photo { get; set; }
+        public int FavouritePokemonId { get; set; }
     }
 }
