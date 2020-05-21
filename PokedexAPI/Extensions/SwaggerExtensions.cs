@@ -22,6 +22,7 @@ namespace PokedexApi.Extensions
                     Description = "APP Covid",
                     Version = "v1"
                 });
+                options.IncludeXmlComments("./PokedexAPI.xml", true);
 
                 var security = new Dictionary<string, IEnumerable<string>>
                 {
