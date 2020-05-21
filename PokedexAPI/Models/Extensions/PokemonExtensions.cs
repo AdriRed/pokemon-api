@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.Xml;
 using System.Threading.Tasks;
 
 namespace PokedexAPI.Models.Extensions
@@ -32,7 +33,10 @@ namespace PokedexAPI.Models.Extensions
             {
                 Id = entity.Id,
                 Photo = entity.Image,
-                Name = entity.Name
+                Name = entity.Name,
+                Type1 = entity.Type1,
+                Type2 = entity.Type2,
+                Owner = entity.User?.UserName
             };
         }
 
@@ -42,7 +46,9 @@ namespace PokedexAPI.Models.Extensions
             {
                 Id = model.Id,
                 Image = model.Photo,
-                Name = model.Name
+                Name = model.Name,
+                Type1 = model.Type1,
+                Type2 = model.Type2
             };
         }
     }

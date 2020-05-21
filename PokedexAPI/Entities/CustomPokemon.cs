@@ -12,5 +12,7 @@ namespace PokedexAPI.Entities
         public virtual User User { get; set; }
         public byte[] Image { get; set; }
         public string Name { get; set; }
+        public int Type1 { get; set; }
+        public int? Type2 { get; set; }
     }
 }

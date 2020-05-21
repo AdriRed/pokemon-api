@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PokedexAPI.Context;
 
 namespace PokedexAPI.Migrations
 {
     [DbContext(typeof(PokemonApiContext))]
-    partial class PokemonApiContextModelSnapshot : ModelSnapshot
+    [Migration("20200521124519_AddedTypesToCustomPokemon")]
+    partial class AddedTypesToCustomPokemon
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
