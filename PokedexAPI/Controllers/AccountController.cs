@@ -12,7 +12,10 @@ using PokedexAPI.Models.Extensions;
 using PokedexAPI.Services;
 
 namespace PokedexAPI.Controllers
-{
+{   
+    /// <summary>
+    /// Controller of account actions
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
@@ -25,6 +28,11 @@ namespace PokedexAPI.Controllers
             _userService = userService;
         }
 
+        /// <summary>
+        /// Login user
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [ProducesResponseType(typeof(LoginResult), 200)]
         [ProducesResponseType(typeof(ErrorModel), 500)]
@@ -36,6 +44,11 @@ namespace PokedexAPI.Controllers
             return Ok(user.ToLoginResult());
         }
 
+        /// <summary>
+        /// Register user
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [ProducesResponseType(typeof(LoginResult), 200)]
         [ProducesResponseType(typeof(ErrorModel), 500)]
@@ -53,6 +66,10 @@ namespace PokedexAPI.Controllers
             return Ok(user.ToLoginResult());
         }
 
+        /// <summary>
+        /// Get self data
+        /// </summary>
+        /// <returns></returns>
         // GET: api/Account/self
         [HttpGet("self")]
         [ProducesResponseType(typeof(UserModel), 200)]
@@ -63,6 +80,11 @@ namespace PokedexAPI.Controllers
             return Ok(user.ToModel());
         }
 
+        /// <summary>
+        /// Sets the photo icon for yourself
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         // PUT: api/Account/setphoto
         [HttpPut("setphoto")]
         [ProducesResponseType(typeof(UserModel), 200)]
@@ -73,6 +95,11 @@ namespace PokedexAPI.Controllers
             return Ok(user.ToModel());
         }
 
+        /// <summary>
+        /// Edits yourself
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         // GET: api/Account/edit
         [HttpPut("edit")]
         [ProducesResponseType(typeof(UserModel), 200)]
@@ -83,6 +110,11 @@ namespace PokedexAPI.Controllers
             return Ok(user.ToModel());
         }
 
+        /// <summary>
+        /// Changes your password
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         // POST: api/Account/edit
         [HttpPut("changepassword")]
         [ProducesResponseType(typeof(UserModel), 200)]
